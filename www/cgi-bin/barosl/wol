@@ -1,0 +1,58 @@
+#!/usr/bin/env lua
+
+print('Content-type: text/html; charset=UTF-8\n')
+print('<!DOCTYPE html>')
+print('<html><head><title>Wake-on-LAN</title></head><body>')
+
+SCRIPT_NAME = os.getenv('SCRIPT_NAME') or ''
+PATH_INFO = os.getenv('PATH_INFO')
+REQUEST_METHOD = os.getenv('REQUEST_METHOD')
+
+loadfile('/root/box/conf/wol')()
+
+if REQUEST_METHOD == 'POST' then
+	CONTENT_LENGTH = tonumber(os.getenv('CONTENT_LENGTH'))
+	data = io.stdin:read(CONTENT_LENGTH)
+else
+	data = os.getenv('QUERY_STRING')
+end
+if data and data:len() == 0 then data = nil end
+
+if data then
+	dummy, dummy, mac = data:find('mac=([^&]+)')
+	dummy, dummy, password = data:find('password=([^&]+)')
+	mac = mac:gsub('%%3A', ':')
+	
+	if password ~= wol_password then
+		print('Authentication error.')
+		os.exit()
+	end
+	
+	fp = io.popen('wol -h '..wol_addr..' '..mac)
+	data = fp:read('*all')
+	fp:close()
+	
+	print(data)
+	os.exit()
+end
+
+print('<style type="text/css">@import url(\'/static/styles/base.css\');</style>')
+print('<h1>Wake-on-LAN</h1>')
+
+print('<h2>Available targets</h2>')
+print('<ul>')
+for idx, target in pairs(wol_targets) do
+	print('<li><a href="" onclick="the_form.mac.value = \''..target['mac']..'\'; the_form.password.focus(); return false;">'..target['name']..'</a></li>')
+end
+print('</ul>')
+
+print('<hr style="margin: 10px 0;" />')
+
+print('<form method="post" action="'..SCRIPT_NAME..'" id="the_form">')
+print('Password: <input type="password" name="password" style="width: 100px;" /><br />')
+print('Mac: <input type="text" name="mac" id="mac" style="width: 120px;" /><br />')
+print('<input type="submit" value="Wake-on-LAN" /><br />')
+print('</form>')
+print('<script type="text/javascript">var the_form = document.getElementById(\'the_form\');</script>')
+
+print('</body></html>')

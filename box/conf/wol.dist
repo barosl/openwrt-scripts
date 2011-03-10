@@ -1,0 +1,8 @@
+#!/usr/bin/env lua
+
+wol_password = ''
+wol_addr = '192.168.1.255'
+wol_targets = {
+	{name='desktop', mac='11:22:33:44:55:66'},
+	{name='laptop', mac='aa:bb:cc:dd:ee:ff'},
+}

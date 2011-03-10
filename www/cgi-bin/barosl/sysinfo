@@ -1,0 +1,36 @@
+#!/usr/bin/env lua
+
+print('Content-type: text/javascript; charset=UTF-8\n')
+
+output = ''
+
+-- for System
+output = output..'<b>System:</b> '
+
+fp = io.popen('uname -a')
+data = fp:read('*all')
+fp:close()
+
+output = output..data..'<br />\n'
+
+-- for Uptime
+output = output..'<b>Uptime:</b> '
+
+fp = io.popen('uptime')
+data = fp:read('*all')
+fp:close()
+
+pos, dummy = data:find('up')
+data = data:sub(pos+2):gsub('^%s+', '')
+output = output..data..'<br />\n'
+
+-- for Date
+output = output..'<b>Date:</b> '
+
+fp = io.popen('date')
+data = fp:read('*all')
+fp:close()
+
+output = output..data..'<br />\n'
+
+print('document.write(\''..output:gsub('\n', '\\n')..'\');')
