@@ -22,17 +22,21 @@ if data then
 	dummy, dummy, mac = data:find('mac=([^&]+)')
 	dummy, dummy, password = data:find('password=([^&]+)')
 	mac = mac:gsub('%%3A', ':')
-	
+
 	if password ~= wol_password then
 		print('Authentication error.')
 		os.exit()
 	end
-	
+
 	fp = io.popen('wol -h '..wol_addr..' '..mac)
 	data = fp:read('*all')
 	fp:close()
-	
-	print(data)
+
+	if data:len() == 0 then
+		print('Unable to execute command')
+	else
+		print(data)
+	end
 	os.exit()
 end
 
