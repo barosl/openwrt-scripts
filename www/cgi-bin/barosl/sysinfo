@@ -1,6 +1,8 @@
 #!/usr/bin/env lua
 
-print('Content-type: text/javascript; charset=UTF-8\n')
+print('Content-type: text/javascript; charset=UTF-8')
+print('Cache-Control: no-store, no-cache, must-revalidate\nPragma: no-cache\nExpires: 0')
+print('')
 
 output = ''
 

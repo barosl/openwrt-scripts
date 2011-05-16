@@ -1,6 +1,8 @@
 #!/usr/bin/env lua
 
-print('Content-type: text/html; charset=UTF-8\n')
+print('Content-type: text/html; charset=UTF-8')
+print('')
+
 print('<!DOCTYPE html>')
 print('<html><head><title>Wake-on-LAN</title></head><body>')
 
