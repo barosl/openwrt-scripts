@@ -6,7 +6,7 @@ print('')
 
 output = ''
 
--- for System
+-- system
 output = output..'<b>System:</b> '
 
 fp = io.popen('uname -a')
@@ -15,7 +15,7 @@ fp:close()
 
 output = output..data..'<br />\n'
 
--- for Uptime
+-- uptime
 output = output..'<b>Uptime:</b> '
 
 fp = io.popen('uptime')
@@ -26,7 +26,7 @@ pos, dummy = data:find('up')
 data = data:sub(pos+2):gsub('^%s+', '')
 output = output..data..'<br />\n'
 
--- for Date
+-- date
 output = output..'<b>Date:</b> '
 
 fp = io.popen('date')
@@ -34,5 +34,46 @@ data = fp:read('*all')
 fp:close()
 
 output = output..data..'<br />\n'
+
+-- network
+output = output..'<b>Network:</b> '
+
+fp = io.popen('iptables -t raw -L PREROUTING -vx')
+data = fp:read('*all')
+fp:close()
+
+byte_units = {
+	{'TB', 1024*1024*1024*1024},
+	{'GB', 1024*1024*1024},
+	{'MB', 1024*1024},
+	{'kB', 1024},
+}
+
+function bytes2str(bytes)
+	for key, val in pairs(byte_units) do
+		unit_name = val[1]
+		unit_size = val[2]
+
+		if bytes >= unit_size then
+			return string.format('%.2f', bytes/unit_size)..unit_name
+		end
+	end
+
+	return bytes..' bytes'
+end
+
+bytes_up = 0
+bytes_down = 0
+
+for bytes, iface in data:gmatch('[0-9]+[^ ]? +([0-9]+[^ ]?) +[^ ]+ +[^ ]+ +[^ ]+ +([^ ]+)') do
+	if iface == 'br-lan' then bytes_up = tonumber(bytes)
+	else bytes_down = tonumber(bytes)
+	end
+end
+
+data = bytes2str(bytes_up)..' up, '..bytes2str(bytes_down)..' down'
+
+output = output..data..'<br />\n'
+
 
 print('document.write(\''..output:gsub('\n', '\\n')..'\');')
