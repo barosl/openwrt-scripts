@@ -15,6 +15,15 @@ fp:close()
 
 output = output..data..'<br />\n'
 
+-- date
+output = output..'<b>Date:</b> '
+
+fp = io.popen('date')
+data = fp:read('*all')
+fp:close()
+
+output = output..data..'<br />\n'
+
 -- uptime
 output = output..'<b>Uptime:</b> '
 
@@ -24,15 +33,6 @@ fp:close()
 
 pos, dummy = data:find('up')
 data = data:sub(pos+2):gsub('^%s+', '')
-output = output..data..'<br />\n'
-
--- date
-output = output..'<b>Date:</b> '
-
-fp = io.popen('date')
-data = fp:read('*all')
-fp:close()
-
 output = output..data..'<br />\n'
 
 -- network
