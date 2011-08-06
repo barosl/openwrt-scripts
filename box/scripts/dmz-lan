@@ -10,7 +10,7 @@ if [ 1 -ne "`iptables -t nat -L PREROUTING | grep "$WAN_IP" | grep "$DMZ_IP" | g
 	done
 	
 	# When set to prerouting_rule, the router is not accessible from WAN.
-	iptables -t nat -A PREROUTING -d "$WAN_IP" -j DNAT --to "$DMZ_IP" -i "$LAN_DEV"
+	iptables -t nat -A PREROUTING -s "$DMZ_IP"/24 -d "$WAN_IP" -j DNAT --to "$DMZ_IP" -i "$LAN_DEV"
 	
 	# When set to FORWARD, the DMZ is not accessible from LAN.
 	iptables -A forwarding_rule -d "$DMZ_IP" -j ACCEPT -i "$LAN_DEV"
