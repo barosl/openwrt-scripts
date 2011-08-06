@@ -15,7 +15,7 @@ if [ 1 -ne "`iptables -t nat -L PREROUTING | grep "$WAN_IP" | grep "$DMZ_IP" | g
 	# When set to FORWARD, the DMZ is not accessible from LAN.
 	iptables -A forwarding_rule -d "$DMZ_IP" -j ACCEPT -i "$LAN_DEV"
 	
-	iptables -t nat -A POSTROUTING -s "$DMZ_IP"/24 -d "$DMZ_IP" -j MASQUERADE
+	iptables -t nat -A POSTROUTING -s "$DMZ_IP"/24 -d "$DMZ_IP" -j MASQUERADE -o "$LAN_DEV"
 else
 	echo 'Already updated' >&2
 fi
